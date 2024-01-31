@@ -1,4 +1,3 @@
-# Rakefile
 require "sinatra/activerecord/rake"
 
 namespace :db do
@@ -6,3 +5,11 @@ namespace :db do
     require "./app"
   end
 end
+
+task :configure_routes do
+  require "sinatra-rake-routes"
+  require './app'
+  SinatraRakeRoutes.set_app_class(TwoFactorAuth)
+end
+
+require "sinatra-rake-routes/tasks"
