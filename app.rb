@@ -33,3 +33,19 @@ post '/signup' do
     "Registration failed: #{user.errors.full_messages.join(', ')}"
   end
 end
+
+post '/login' do
+  params = JSON.parse(request.body.read)
+  email = params['email']
+  password = params['password']
+
+  user = User.authenticate(email, password)
+
+  if user
+    # Successful login
+    session[:user_id] = user.id
+    "Login successful for #{email}!"
+  else
+    "Login failed: Invalid credentials"
+  end
+end

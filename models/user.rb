@@ -13,4 +13,10 @@ class User < ActiveRecord::Base
   def authenticate(password)
     BCrypt::Password.new(password_digest).is_password?(password)
   end
+
+  def self.authenticate(email, password)
+    user = find_by(email: email)
+    return nil unless user
+    return user if user.authenticate(password)
+  end
 end
