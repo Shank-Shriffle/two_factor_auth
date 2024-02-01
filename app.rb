@@ -3,9 +3,10 @@ require 'sinatra'
 require 'bcrypt'
 require 'rotp'
 require 'sinatra/activerecord'
-require 'mail'
 require './models/user'
 require 'json'
+require 'dotenv/load'
+require './config/mail'
 
 enable :sessions
 
@@ -27,7 +28,7 @@ post '/signup' do
   user = User.new(email: email, password: password)
   
   if user.save
-    # Send confirmation email part to be implemented here 
+    send_confirmation_email(email) 
     "Registration successful! Confirmation email sent to #{email}"
   else
     "Registration failed: #{user.errors.full_messages.join(', ')}"
@@ -47,5 +48,16 @@ post '/login' do
     "Login successful for #{email}!"
   else
     "Login failed: Invalid credentials"
+  end
+end
+
+helpers do
+  def send_confirmation_email(email)
+    Mail.deliver do
+      to email
+      from ENV['EMAIL_ADDRESS']
+      subject "Confirmation Email"
+      body "Thank you for signing up to TwoFactorAuth!"
+    end
   end
 end
